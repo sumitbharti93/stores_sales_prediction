@@ -9,7 +9,7 @@ from stores_sales.pipeline.pipeline import Pipeline
 def main():
     config = Configuration()
     pipeline = Pipeline(config=config)
-    pipeline.start_data_ingestion()
+    pipeline.run()
 
 if __name__ == "__main__":
     main()
