@@ -1,37 +1,83 @@
 
 columns:
 
- longitude: float
- latitude: float
- housing_median_age: float
- total_rooms: float64
- total_bedrooms: float64
- population: float64
- households: float64
- median_income: float64
- median_house_value: float64
- ocean_proximity: object
+  Item_Identifier : object
+  Item_Weight      : float64
+  Item_Fat_Content  : object
+  Item_Visibility : float64
+  Item_Type         : object
+  Item_MRP         : float64
+  Outlet_Identifier : object
+  Outlet_Establishment_Year : int64
+  Outlet_Size : object
+  Outlet_Location_Type : object
+  Outlet_Type : object
+  Item_Outlet_Sales : float64
 
 numerical_columns:
-  - longitude
-  - latitude
-  - housing_median_age
-  - total_rooms
-  - total_bedrooms
-  - population
-  - households
-  - median_income
+- Item_Weight
+- Item_Visibility
+- Item_MRP
+- Outlet_Establishment_Year
+- Item_Outlet_Sales
 
 categorical_columns:
-  - ocean_proximity
+- Item_Identifier
+- Item_Fat_Content
+- Item_Type
+- Outlet_Identifier
+- Outlet_Size
+- Outlet_Location_Type
+- Outlet_Type
 
-
-target_column: median_house_value
+target_column: Item_Outlet_Sales
 
 domain_value:
- ocean_proximity:
-  - <1H OCEAN 
-  - INLAND 
-  - ISLAND
-  - NEAR BAY
-  - NEAR OCEAN 
+  Item_Fat_Content:
+  - <Low Fat
+  - <Regular
+  - <low fat
+  - <LF
+  - <reg
+  Item_Type:
+  - <Dairy
+  - <Soft Drinks
+  - <Meat
+  - <Fruits and Vegetables
+  - <Household
+  - <Baking Goods
+  - <Snack Foods
+  - <Frozen Foods
+  - <Breakfast
+  - <Health and Hygiene
+  - <Hard Drinks
+  - <Canned
+  - <Breads
+  - <Starchy Foods
+  - <Others
+  - <Seafood
+  Outlet_Identifier:
+  - <OUT049
+  - <OUT018
+  - <OUT010
+  - <OUT013
+  - <OUT027
+  - <OUT045
+  - <OUT017
+  - <OUT046
+  - <OUT035
+  - <OUT019
+  Outlet_Size:
+  - <Medium
+  - <nan
+  - <High
+  - <Small
+  Outlet_Location_Type:
+  - <Tier 1
+  - <Tier 3
+  - <Tier 2
+  Outlet_Type:
+  - <Supermarket Type1
+  - <Supermarket Type2
+  - <Grocery Store
+  - <Supermarket Type3
