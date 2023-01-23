@@ -1,9 +1,13 @@
-from stores_sales.entity.artifact_entity import DataIngestionArtifact,DataValidationArtifact
+from stores_sales.entity.artifact_entity import DataIngestionArtifact,DataValidationArtifact, DataTransformationArtifact, \
+    ModelTrainerArtifact
 from stores_sales.config.configuration import Configuration
 from stores_sales.exception import Sales_Exception
 from stores_sales.logger import logging 
 from stores_sales.component.data_ingestion import DataIngestion
 from stores_sales.component.data_validation import DataValidation
+from stores_sales.component.data_transformation import DataTransformation
+from stores_sales.component.model_trainer import ModelTrainer
+
 import sys, os
 
 class Pipeline:
@@ -28,7 +32,35 @@ class Pipeline:
         except Exception as e:
             raise Sales_Exception(e,sys) from e
 
+    def start_data_transformation(self,
+                                data_ingestion_artifact: DataIngestionArtifact,
+                                data_validation_artifact: DataValidationArtifact
+                                ) -> DataTransformationArtifact:
+        try:
+            data_transformation = DataTransformation(
+                data_transformation_config=self.config.get_data_transformation_config(),
+                data_ingestion_artifact=data_ingestion_artifact,
+                data_validation_artifact=data_validation_artifact
+            )
+            return data_transformation.initiate_data_transformation()
+        except Exception as e:
+            raise Sales_Exception(e, sys)   
+    
+    
+    def start_model_trainer(self, data_transformation_artifact: DataTransformationArtifact) -> ModelTrainerArtifact:
+        try:
+            model_trainer = ModelTrainer(model_trainer_config=self.config.get_model_trainer_config(),
+                                            data_transformation_artifact=data_transformation_artifact
+                                            )
+            return model_trainer.initiate_model_trainer()
+        except Exception as e:
+            raise Sales_Exception(e, sys) from e
     
     def run(self):
         data_ingestion_artifact = self.start_data_ingestion()
-        self.start_data_validation(data_ingestion_artifact=data_ingestion_artifact)
+        data_validation_artifact = self.start_data_validation(data_ingestion_artifact=data_ingestion_artifact)
+        data_transformation_artifact = self.start_data_transformation(
+                data_ingestion_artifact=data_ingestion_artifact,
+                data_validation_artifact=data_validation_artifact
+            ) 
+        model_trainer_artifact = self.start_model_trainer(data_transformation_artifact=data_transformation_artifact)

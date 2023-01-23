@@ -7,7 +7,7 @@ from stores_sales.entity.artifact_entity import DataIngestionArtifact, DataValid
 import sys,os
 import numpy as np
 from sklearn.base import BaseEstimator,TransformerMixin
-from sklearn.preprocessing import StandardScaler,OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
@@ -29,7 +29,7 @@ from stores_sales.util.util import read_yaml_file, save_object, save_numpy_array
 #   Outlet_Type : object
 #   Item_Outlet_Sales : float64
 
-class FeatureGenerator(BaseEstimator, TransformerMixin):
+class FeatureGenerator_removal(BaseEstimator, TransformerMixin):
 
     def __init__(self,
                  total_rooms_ix=3,
@@ -51,7 +51,6 @@ class FeatureGenerator(BaseEstimator, TransformerMixin):
                 households_ix = self.columns.index(COLUMN_HOUSEHOLDS)
                 total_bedrooms_ix = self.columns.index(COLUMN_TOTAL_BEDROOM)
 
-            self.add_bedrooms_per_room = add_bedrooms_per_room
             self.total_rooms_ix = total_rooms_ix
             self.population_ix = population_ix
             self.households_ix = households_ix
@@ -109,8 +108,6 @@ class DataTransformation:
             categorical_columns = dataset_schema[CATEGORICAL_COLUMN_KEY].copy()
 
             categorical_columns.remove(column_to_be_dropped)
-            
-            print(categorical_columns)
 
             num_pipeline = Pipeline(steps=[
                 ('imputer', SimpleImputer(strategy="median"))]
@@ -118,7 +115,7 @@ class DataTransformation:
 
             cat_pipeline = Pipeline(steps=[
                  ('impute', SimpleImputer(strategy="most_frequent")),
-                 ('one_hot_encoder', OneHotEncoder()),
+                 ('one_hot_encoder', OneHotEncoder())
             ]
             )
 
@@ -128,7 +125,7 @@ class DataTransformation:
 
             preprocessing = ColumnTransformer([
                 ('num_pipeline', num_pipeline, numerical_columns),
-                ('cat_pipeline', cat_pipeline, categorical_columns),
+                ('cat_pipeline', cat_pipeline, categorical_columns)
             ])
             return preprocessing
 
@@ -167,12 +164,20 @@ class DataTransformation:
             
 
             logging.info(f"Applying preprocessing object on training dataframe and testing dataframe")
-            input_feature_train_arr=preprocessing_obj.fit_transform(input_feature_train_df)
-            input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df)
 
-            train_arr = np.c_[ input_feature_train_arr, np.array(target_feature_train_df)]
+            input_feature_train_arr=preprocessing_obj.fit_transform(input_feature_train_df).toarray()
+            input_feature_test_arr = preprocessing_obj.transform(input_feature_test_df).toarray()
+            print(input_feature_train_arr)
+            # df = pd.DataFrame(input_feature_train_arr)
+            # print(df)
+            # print(np.array(df))
+            # df1 = pd.DataFrame(input_feature_test_arr)
 
-            test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
+            train_arr = np.c_[np.array(input_feature_train_arr), np.array(target_feature_train_df)]
+            print(train_arr)
+
+            test_arr = np.c_[np.array(input_feature_test_arr), np.array(target_feature_test_df)]
+            print(test_arr)
             
             transformed_train_dir = self.data_transformation_config.transformed_train_dir
             transformed_test_dir = self.data_transformation_config.transformed_test_dir
