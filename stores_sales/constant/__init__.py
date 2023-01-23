@@ -59,7 +59,7 @@ DATASET_SCHEMA_COLUMNS_KEY=  "columns"
 NUMERICAL_COLUMN_KEY="numerical_columns"
 CATEGORICAL_COLUMN_KEY = "categorical_columns"
 
-
+COLUMN_TO_BE_DROPPED = 'column_to_be_dropped'
 TARGET_COLUMN_KEY="target_column"
 
 

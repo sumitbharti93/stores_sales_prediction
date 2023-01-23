@@ -57,7 +57,7 @@ class FeatureGenerator(BaseEstimator, TransformerMixin):
             self.households_ix = households_ix
             self.total_bedrooms_ix = total_bedrooms_ix
         except Exception as e:
-            raise HousingException(e, sys) from e
+            raise Sales_Exception(e, sys) from e
 
     def fit(self, X, y=None):
         return self
@@ -79,7 +79,7 @@ class FeatureGenerator(BaseEstimator, TransformerMixin):
 
             return generated_feature
         except Exception as e:
-            raise HousingException(e, sys) from e
+            raise Sales_Exception(e, sys) from e
 
 
 
@@ -95,7 +95,7 @@ class DataTransformation:
             self.data_validation_artifact = data_validation_artifact
 
         except Exception as e:
-            raise HousingException(e,sys)
+            raise Sales_Exception(e,sys)
 
 
     def get_data_transformer_object(self)->ColumnTransformer:
@@ -105,23 +105,20 @@ class DataTransformation:
             dataset_schema = read_yaml_file(file_path=schema_file_path)
 
             numerical_columns = dataset_schema[NUMERICAL_COLUMN_KEY]
-            categorical_columns = dataset_schema[CATEGORICAL_COLUMN_KEY]
+            column_to_be_dropped = dataset_schema[COLUMN_TO_BE_DROPPED]
+            categorical_columns = dataset_schema[CATEGORICAL_COLUMN_KEY].copy()
 
+            categorical_columns.remove(column_to_be_dropped)
+            
+            print(categorical_columns)
 
             num_pipeline = Pipeline(steps=[
-                ('imputer', SimpleImputer(strategy="median")),
-                ('feature_generator', FeatureGenerator(
-                    add_bedrooms_per_room=self.data_transformation_config.add_bedroom_per_room,
-                    columns=numerical_columns
-                )),
-                ('scaler', StandardScaler())
-            ]
+                ('imputer', SimpleImputer(strategy="median"))]
             )
 
             cat_pipeline = Pipeline(steps=[
                  ('impute', SimpleImputer(strategy="most_frequent")),
                  ('one_hot_encoder', OneHotEncoder()),
-                 ('scaler', StandardScaler(with_mean=False))
             ]
             )
 
@@ -136,7 +133,7 @@ class DataTransformation:
             return preprocessing
 
         except Exception as e:
-            raise HousingException(e,sys) from e   
+            raise Sales_Exception(e,sys) from e   
 
     def initiate_data_transformation(self)->DataTransformationArtifact:
         try:
@@ -159,13 +156,13 @@ class DataTransformation:
             schema = read_yaml_file(file_path=schema_file_path)
 
             target_column_name = schema[TARGET_COLUMN_KEY]
-
+            column_to_be_dropped = schema[COLUMN_TO_BE_DROPPED]
 
             logging.info(f"Splitting input and target feature from training and testing dataframe.")
-            input_feature_train_df = train_df.drop(columns=[target_column_name],axis=1)
+            input_feature_train_df = train_df.drop(columns=[target_column_name, column_to_be_dropped],axis=1)
             target_feature_train_df = train_df[target_column_name]
 
-            input_feature_test_df = test_df.drop(columns=[target_column_name],axis=1)
+            input_feature_test_df = test_df.drop(columns=[target_column_name, column_to_be_dropped],axis=1)
             target_feature_test_df = test_df[target_column_name]
             
 
@@ -206,7 +203,7 @@ class DataTransformation:
             return data_transformation_artifact
             
         except Exception as e:
-            raise HousingException(e,sys) from e
+            raise Sales_Exception(e,sys) from e
 
     def __del__(self):
         logging.info(f"{'>>'*30}Data Transformation log completed.{'<<'*30} \n\n")

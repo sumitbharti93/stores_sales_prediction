@@ -30,6 +30,8 @@ categorical_columns:
 - Outlet_Location_Type
 - Outlet_Type
 
+column_to_be_dropped : Item_Identifier
+
 target_column: Item_Outlet_Sales
 
 domain_value:
