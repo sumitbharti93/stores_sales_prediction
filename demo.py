@@ -7,9 +7,9 @@ from stores_sales.pipeline.pipeline import Pipeline
 
 
 def main():
-    config = Configuration()
-    pipeline = Pipeline(config=config)
-    pipeline.run()
+    pipeline = Pipeline()
+    pipeline.start()
+    print(pipeline.experiment.running_status)
 
 if __name__ == "__main__":
     main()

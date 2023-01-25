@@ -1,0 +1,5 @@
+best_model:
+  model_path: D:\Python Project\stores_sales_prediction\stores_sales\artifact\model_trainer\2023-01-24-23-25-18\trained_model\model.pkl
+history:
+  2023-01-24-23-25-18:
+    model_path: D:\Python Project\stores_sales_prediction\stores_sales\artifact\model_trainer\2023-01-24-13-41-25\trained_model\model.pkl

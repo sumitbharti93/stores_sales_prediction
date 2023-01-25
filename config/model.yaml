@@ -21,6 +21,19 @@ model_selection:
       min_samples_leaf: 2
     search_param_grid:
       min_samples_leaf:
-      - 4
+      - 1
+      - 2
+      n_estimators:
+      - 50
+      - 80
+      max_depth:
+      - 6
+      min_samples_split:
+      - 2
+      max_leaf_nodes:
+      - 15
+      - 20
+
+
 
 

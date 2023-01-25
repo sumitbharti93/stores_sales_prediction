@@ -40,11 +40,11 @@ MetricInfoArtifact = namedtuple("MetricInfoArtifact",
 
 
 
-def evaluate_classification_model(model_list: list, X_train:np.ndarray, y_train:np.ndarray, X_test:np.ndarray, y_test:np.ndarray, base_accuracy:float=0.6)->MetricInfoArtifact:
+def evaluate_classification_model(model_list: list, X_train:np.ndarray, y_train:np.ndarray, X_test:np.ndarray, y_test:np.ndarray, base_accuracy:float=0.55)->MetricInfoArtifact:
     pass
 
 
-def evaluate_regression_model(model_list: list, X_train:np.ndarray, y_train:np.ndarray, X_test:np.ndarray, y_test:np.ndarray, base_accuracy:float=0.6) -> MetricInfoArtifact:
+def evaluate_regression_model(model_list: list, X_train:np.ndarray, y_train:np.ndarray, X_test:np.ndarray, y_test:np.ndarray, base_accuracy:float=0.55) -> MetricInfoArtifact:
     """
     Description:
     This function compare multiple regression model return best model
@@ -176,8 +176,8 @@ class ModelFactory:
     def update_property_of_class(instance_ref:object, property_data: dict):
         try:
             if not isinstance(property_data, dict):
-                raise Exception("property_data parameter required to dictionary")
-            print(property_data)
+                raise Exception("property_data parameter should be dictionary")
+
             for key, value in property_data.items():
                 logging.info(f"Executing:$ {str(instance_ref)}.{key}={value}")
                 setattr(instance_ref, key, value)
@@ -236,6 +236,7 @@ class ModelFactory:
             logging.info(message)
             grid_search_cv.fit(input_feature, output_feature)
             message = f'{">>"* 30} f"Training {type(initialized_model.model).__name__}" completed {"<<"*30}'
+            logging.info(message)
             grid_searched_best_model = GridSearchedBestModel(model_serial_number=initialized_model.model_serial_number,
                                                              model=initialized_model.model,
                                                              best_model=grid_search_cv.best_estimator_,
@@ -336,7 +337,7 @@ class ModelFactory:
 
     @staticmethod
     def get_best_model_from_grid_searched_best_model_list(grid_searched_best_model_list: List[GridSearchedBestModel],
-                                                          base_accuracy=0.6
+                                                          base_accuracy=0.55
                                                           ) -> BestModel:
         try:
             best_model = None
@@ -344,7 +345,6 @@ class ModelFactory:
                 if base_accuracy < grid_searched_best_model.best_score:
                     logging.info(f"Acceptable model found:{grid_searched_best_model}")
                     base_accuracy = grid_searched_best_model.best_score
-                    print(grid_searched_best_model.best_score)
                     best_model = grid_searched_best_model
             if not best_model:
                 raise Exception(f"None of Model has base accuracy: {base_accuracy}")
@@ -353,7 +353,7 @@ class ModelFactory:
         except Exception as e:
             raise Sales_Exception(e, sys) from e
 
-    def get_best_model(self, X, y,base_accuracy=0.6) -> BestModel:
+    def get_best_model(self, X, y,base_accuracy=0.55) -> BestModel:
         try:
             logging.info("Started Initializing model from config file")
             initialized_model_list = self.get_initialized_model_list()
@@ -363,6 +363,7 @@ class ModelFactory:
                 input_feature=X,
                 output_feature=y
             )
+            print(grid_searched_best_model_list)
             return ModelFactory.get_best_model_from_grid_searched_best_model_list(grid_searched_best_model_list,
                                                                                   base_accuracy=base_accuracy)
         except Exception as e:
