@@ -5,8 +5,8 @@ from stores_sales.logger import logging
 from stores_sales.constant import *
 from stores_sales.config.configuration import Configuration
 import sys, os
+import shutil 
 from stores_sales.entity.config_entity import DataIngestionConfig
-import shutil
 import pandas as pd 
 import numpy as np
 from sklearn.model_selection import StratifiedShuffleSplit

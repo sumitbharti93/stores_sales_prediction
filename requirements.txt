@@ -6,6 +6,5 @@ sklearn
 PyYAML
 evidently 
 dill
-matplotlib 
-shutil 
+matplotlib
 gunicorn
