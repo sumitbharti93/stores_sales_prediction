@@ -5,7 +5,8 @@ __pycache__/
 
 # C extensions
 *.so
-Notebook
+Notebook/
+Stores sales prediction .ipynb/
 # Distribution / packaging
 .Python
 build/

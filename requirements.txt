@@ -8,4 +8,4 @@ evidently
 dill
 matplotlib 
 shutil 
-gunicorn==20.0.4
+gunicorn
